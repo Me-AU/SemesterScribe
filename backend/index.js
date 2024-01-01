@@ -68,26 +68,56 @@ app.get("/books", async (request, response) => {
     }
 });
 
-    // Define a route for retrieving a book by id
-    app.get("/books/:id", async (request, response) => {
-        try {
+// Define a route for retrieving a book by id
+app.get("/books/:id", async (request, response) => {
+    try {
 
-            // Retrieve the book id from the request parameters
-            const { id } = request.params;
+        // Retrieve the book id from the request parameters
+        const { id } = request.params;
 
-            // Retrieve the book with the specified id from the MongoDB database
-            const book = await Book.findById(id);
+        // Retrieve the book with the specified id from the MongoDB database
+        const book = await Book.findById(id);
 
-            // Send a response with a status code indicating successful retrieval (200) and the retrieved book
-            return response.status(200).json(book);
-        } catch (error) {
-            // Log any errors to the console
-            console.log(error.message);
-            
-            // Send an error response with a status code of 500 and an error message
-            response.status(500).send({ message: error.message });
+        // Send a response with a status code indicating successful retrieval (200) and the retrieved book
+        return response.status(200).json(book);
+    } catch (error) {
+        // Log any errors to the console
+        console.log(error.message);
+        
+        // Send an error response with a status code of 500 and an error message
+        response.status(500).send({ message: error.message });
+    }
+});
+
+// Define an update route for modifying a book by id
+app.put('/books/:id', async (request, response) => {
+    try {
+        // Validate the presence of required fields (title, author, publishYear) in the request body
+        if (!request.body.title || !request.body.author || !request.body.publishYear) {
+            return response.status(400).send({ message: 'Send all required fields: title, author, publishYear' });
         }
-    });
+
+        // Retrieve the book id from the request parameters
+        const { id } = request.params;
+
+        // Update the book in the MongoDB database using the provided id and request body
+        const result = await Book.findByIdAndUpdate(id, request.body);
+
+        // Check if the book with the specified id exists
+        if (!result) {
+            return response.status(404).json({ message: 'Book not found' });
+        }
+
+        // Send a response with a status code indicating successful update (200) and a success message
+        return response.status(200).send({ message: 'Book updated successfully' });
+    } catch (error) {
+        // Log any errors to the console
+        console.log(error.message);
+
+        // Send an error response with a status code of 500 and an error message
+        response.status(500).send({ message: error.message });
+    }
+});
 
 // Connect to MongoDB using Mongoose
 mongoose
