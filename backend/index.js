@@ -41,22 +41,39 @@ app.post("/books", async (request, response) => {
         return response.status(201).send(book);
     } catch (error) {
         // Log any errors to the console
-        console.log(error);
+        console.log(error.message);
         
         // Send an error response with a status code of 500 and an error message
         response.status(500).send({ message: error.message });
     }
 });
 
-    
-    
+// Define a route for retrieving all books
+app.get("/books", async (request, response) => {
+    try {
+        // Retrieve all books from the MongoDB database
+        const books = await Book.find({});
+
+        // Send a response with a status code indicating successful retrieval (200) and the retrieved books
+        return response.status(200).json({
+            count: books.length,
+            data: books,
+        });
+    } catch (error) {
+        // Log any errors to the console
+        console.log(error.message);
+        
+        // Send an error response with a status code of 500 and an error message
+        response.status(500).send({ message: error.message });
+    }
+});
 
 // Connect to MongoDB using Mongoose
 mongoose
     .connect(mongoDBURL)
     .then(() => {
         // Log a successful connection message
-        console.log("Connected to MongoDB!");
+        console.log("\nConnected to MongoDB!");
 
         // Start the Express server after successfully connecting to MongoDB
         app.listen(PORT, () => {
