@@ -68,6 +68,27 @@ app.get("/books", async (request, response) => {
     }
 });
 
+    // Define a route for retrieving a book by id
+    app.get("/books/:id", async (request, response) => {
+        try {
+
+            // Retrieve the book id from the request parameters
+            const { id } = request.params;
+
+            // Retrieve the book with the specified id from the MongoDB database
+            const book = await Book.findById(id);
+
+            // Send a response with a status code indicating successful retrieval (200) and the retrieved book
+            return response.status(200).json(book);
+        } catch (error) {
+            // Log any errors to the console
+            console.log(error.message);
+            
+            // Send an error response with a status code of 500 and an error message
+            response.status(500).send({ message: error.message });
+        }
+    });
+
 // Connect to MongoDB using Mongoose
 mongoose
     .connect(mongoDBURL)
