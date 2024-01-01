@@ -1,0 +1,18 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "SemesterScribe delivers affordable semester-specific eBooks with advanced study tools. It ensures learning experiences with a user-friendly eBook store. Effortless signup, clear overviews, efficient studying, and smart search features make SemesterScribe your streamlined academic companion.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.2"
+  }
+}
