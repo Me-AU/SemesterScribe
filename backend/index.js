@@ -1,22 +1,69 @@
-import express, { response } from "express";
+// Import necessary modules and configurations
+import express from "express";
 import { PORT, mongoDBURL } from "./config.js";
 import mongoose from "mongoose";
+import { Book } from "./models/bookModel.js";
 
+// Create an Express application
 const app = express();
 
+// Middleware to parse incoming request body
+app.use(express.json());
+
+// Define a route for the root endpoint
 app.get("/", (request, response) => {
+    // Log incoming request object
     console.log(request);
-    return response.status(200).send("Hello World!");
+    
+    // Send a response with a status code and message
+    return response.status(200).send("Time to SemScribe!");
 });
 
+// Define a route for creating a new book
+app.post("/books", async (request, response) => {
+    try {
+        // Validate presence of required fields (title, author, publishYear) in the request body
+        if (!request.body.title || !request.body.author || !request.body.publishYear) {
+            return response.status(400).send({ message: "Required fields: title, author, publishYear" });
+        }
+
+        // Create a new Book instance with data from the request body
+        const newBook = new Book({
+            title: request.body.title,
+            author: request.body.author,
+            publishYear: request.body.publishYear,
+        });
+
+        // Create the book in the MongoDB database
+        const book = await Book.create(newBook);
+
+        // Send a response with a status code indicating successful creation (201) and the created book object
+        return response.status(201).send(book);
+    } catch (error) {
+        // Log any errors to the console
+        console.log(error);
+        
+        // Send an error response with a status code of 500 and an error message
+        response.status(500).send({ message: error.message });
+    }
+});
+
+    
+    
+
+// Connect to MongoDB using Mongoose
 mongoose
     .connect(mongoDBURL)
     .then(() => {
+        // Log a successful connection message
         console.log("Connected to MongoDB!");
+
+        // Start the Express server after successfully connecting to MongoDB
         app.listen(PORT, () => {
             console.log(`App is listening on port ${PORT}!`);
         });
     })
     .catch((error) => {
+        // Log an error message if connection to MongoDB fails
         console.log(error);
     });
