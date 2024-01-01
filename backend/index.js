@@ -10,6 +10,9 @@ const app = express();
 // Middleware to parse incoming request body
 app.use(express.json());
 
+// Middleware for handling CORS POLICY
+app.use(cors());
+
 // Mount the 'booksRoute' router under the "/books" path
 app.use("/books", booksRoute);
 
